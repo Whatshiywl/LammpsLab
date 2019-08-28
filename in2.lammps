@@ -1,0 +1,43 @@
+#Define system
+units			metal
+dimension		3
+atom_style      	atomic
+boundary        	p p p
+neigh_modify		delay 0 every 1
+
+#Define geometry 
+region 			caixa block 0 40 0 40 0 40 units box
+create_box		1 caixa
+
+lattice 		bcc 2.87
+create_atoms		1 region caixa
+
+#Potential
+pair_style		eam/fs
+pair_coeff 		* * Fe_2.eam.fs Fe
+mass 			1 55.0
+
+# Termodinamica
+
+# velocity        	all create 500.0 97287
+# fix			5 all npt temp 1200.0 1200.0 10.0 iso 1.0 1.0 100000.0 
+# fix 			4 all press/berendsen iso 1.0 1.0 1000.0
+
+# reset_timestep  	0
+
+# Run
+
+# thermo_style		custom step temp press
+# thermo          	1000
+# thermo_modify 		lost ignore flush yes
+
+# dump			1 all custom 1000 xu yu zu
+
+# timestep		0.01
+
+compute 1 all xrd 1.541838 Fe 2Theta 10 110 c 1 1 1 LP 1 echo
+fix 1 all ave/histo/weight 1 1 1 10 110 250 c_1[1] c_1[2] mode vector file Rad2Theta.xrd
+
+run             	1
+
+
